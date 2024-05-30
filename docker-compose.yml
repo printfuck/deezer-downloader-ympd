@@ -1,18 +1,27 @@
 services:
   deezer:
+    restart: unless-stopped
     image: pkill/deezer-ympd:latest
     build: .
     ports:
-      - 8000:80
+      - 127.0.0.1:8039:80
       - 6600:6600
     volumes:
       # MPD Library
       - ./mpd:/var/lib/mpd
       # MPD Music Library base path
-      - ./data:/mnt/deezer-downloader
+      - /data/music/deezer-downloader:/mnt/deezer-downloader
+      #- /data/nyx/Soundtracks:/mnt/deezer-downloader/Soundtracks
       # Logs
       - ./log:/log/
       # Your Collection
       # - /data/my_music:/mnt/deezer-downloader/my_music
+      - ./mpd.conf:/etc/mpd.conf
+      # your spotify cookies
+      - ./cookies.txt:/app/cookies.txt
+    dns:
+      - "192.168.178.17"
+      - "192.168.178.43"
     environment:
-      - DEEZER_COOKIE_ARL=908c985e1f7733b1d73801be42e5542d6eaf9c7550fb0019fae589f51e2d207ad889c0709402c97332bd8023469f36b948326b37b6f596099de42479f6aba2189cc5b6ab9052b0a08da7ecba873ab97a79598a8cc8431e66a0cba9223979d19f
+      #- DEEZER_COOKIE_ARL=649fd802d70b6c3ace6f9f533a9dcc32bdbe384c433d2c545b4f6827456c6b8f5205b72376768d1dd23972b90f18ee27dd7833250f71339f67afc2ed2166fda3f0156994ac1244797ea63183af44da884a5d396b083e748a1bf24e8c82507510
+      - DEEZER_COOKIE_ARL=f0fdc6f4bda9fbb7f0b3e5ba395a0cb9308f8f170651507ff28e9af32478fdc5ead94b0ca940dc509d5b348e0fbb9f634311d84fbc5a86f0e1c8680750f6b08c9667248075e62a5b9ea223a48170d02bb5abbd880f743e339adac5a892f7641f

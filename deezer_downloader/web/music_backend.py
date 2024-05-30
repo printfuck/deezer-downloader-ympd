@@ -7,9 +7,10 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 from deezer_downloader.configuration import config
 from deezer_downloader.youtubedl import youtubedl_download
-from deezer_downloader.spotify import get_songs_from_spotify_website
+from deezer_downloader.spotify import get_songs_from_spotify_website,do_download_by_playlist_url
 from deezer_downloader.deezer import TYPE_TRACK, TYPE_ALBUM, TYPE_PLAYLIST, get_song_infos_from_deezer_website, download_song, parse_deezer_playlist, deezer_search, get_deezer_favorites
 from deezer_downloader.deezer import Deezer403Exception, Deezer404Exception
+
 
 from deezer_downloader.threadpool_queue import ThreadpoolScheduler, report_progress
 sched = ThreadpoolScheduler()
@@ -182,27 +183,39 @@ def download_deezer_playlist_and_queue_and_zip(playlist_id, add_to_playlist, cre
 
 @sched.register_command()
 def download_spotify_playlist_and_queue_and_zip(playlist_name, playlist_id, add_to_playlist, create_zip):
-    songs = get_songs_from_spotify_website(playlist_id,
-                                           config["proxy"]["server"])
-    songs_absolute_location = []
-    print(f"We got {len(songs)} songs from the Spotify playlist")
-    for i, song_of_playlist in enumerate(songs):
-        report_progress(i, len(songs))
-        # song_of_playlist: string (artist - song)
-        try:
-            track_id = deezer_search(song_of_playlist, TYPE_TRACK)[0]['id'] #[0] can throw IndexError
-            song = get_song_infos_from_deezer_website(TYPE_TRACK, track_id)
-            absolute_filename = download_song_and_get_absolute_filename(TYPE_PLAYLIST, song, playlist_name)
-            songs_absolute_location.append(absolute_filename)
-        except (IndexError, Deezer403Exception, Deezer404Exception) as msg:
-            print(msg)
-            print(f"Could not find Spotify song ({song_of_playlist}) on Deezer?")
-            # return
-    update_mpd_db(songs_absolute_location, add_to_playlist)
-    songs_with_m3u8_file = create_m3u8_file(songs_absolute_location)
+    # fix this here
+
+    playlist_dir = os.path.join(config["download_dirs"]["playlists"], playlist_name)
+    if not os.path.exists(playlist_dir):
+        os.mkdir(playlist_dir)
+    #absolute_filename = os.path.join(playlist_dir, song_filename)
+
+
+    songs_location = do_download_by_playlist_url(playlist_id, playlist_dir)
+
+    print(songs_location)
+
+    #songs = get_songs_from_spotify_website(playlist_id,
+    #                                        config["proxy"]["server"])
+    #songs_absolute_location = []
+    #print(f"We got {len(songs)} songs from the Spotify playlist")
+    #for i, song_of_playlist in enumerate(songs):
+    #    report_progress(i, len(songs))
+    #    # song_of_playlist: string (artist - song)
+    #    try:
+    #        track_id = deezer_search(song_of_playlist, TYPE_TRACK)[0]['id'] #[0] can throw IndexError
+    #        song = get_song_infos_from_deezer_website(TYPE_TRACK, track_id)
+    #        absolute_filename = download_song_and_get_absolute_filename(TYPE_PLAYLIST, song, playlist_name)
+    #        songs_absolute_location.append(absolute_filename)
+    #    except (IndexError, Deezer403Exception, Deezer404Exception) as msg:
+    #        print(msg)
+    #        print(f"Could not find Spotify song ({song_of_playlist}) on Deezer?")
+    #        # return
+    update_mpd_db(songs_location, add_to_playlist)
+    songs_with_m3u8_file = create_m3u8_file(songs_location)
     if create_zip:
         return [create_zip_file(songs_with_m3u8_file)]
-    return make_song_paths_relative_to_mpd_root(songs_absolute_location)
+    return make_song_paths_relative_to_mpd_root(songs_location)
 
 
 @sched.register_command()
