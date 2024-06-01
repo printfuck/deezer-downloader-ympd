@@ -6,3 +6,7 @@ venv
 .pytest_cache
 __pycache__
 dist
+log/
+mpd/
+data/
+spotify-web-downloader

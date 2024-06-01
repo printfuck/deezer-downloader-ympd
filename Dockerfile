@@ -8,7 +8,7 @@ WORKDIR /
 RUN apk add --no-cache patch
 RUN git clone https://github.com/SuperBFG7/ympd && \
     cd /ympd && \
-    patch -p 1 < /app/deployment/docker/fix_header.patch && \
+    patch -p 1 < /app/deployment/fix_header.patch && \
     mkdir -p /ympd/build && cd build && \
     cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr && make
 
@@ -35,11 +35,12 @@ RUN pip install deezer_downloader*.whl && \
     sed -i 's,/tmp/deezer-downloader,/mnt/deezer-downloader,' /etc/deezer-downloader.ini && \
     rm deezer_downloader*.whl
 RUN pip install mopidy spotify-web-downloader
-#RUN mkdir /app && cd /app && git clone https://github.com/glomatico/spotify-web-downloader
-ADD deezer_downloader/spotify.py /usr/local/lib/python3.10/site-packages/deezer_downloader/
-ADD deezer_downloader/web/music_backend.py /usr/local/lib/python3.10/site-packages/deezer_downloader/web/
-RUN mkdir /app
+
+#ADD deezer_downloader/spotify.py /usr/local/lib/python3.10/site-packages/deezer_downloader/
+#ADD deezer_downloader/web/music_backend.py /usr/local/lib/python3.10/site-packages/deezer_downloader/web/
+#RUN mkdir /app
 #ADD cookies.txt /app/
+
 ADD supervisord.conf /etc/supervisord.conf
 ADD mpd.conf /etc/mpd.conf
 ADD deezer-downloader.ini /etc/deezer-downloader.ini
