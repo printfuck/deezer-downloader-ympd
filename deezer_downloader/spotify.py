@@ -19,6 +19,7 @@ from spotify_web_downloader.downloader_song import DownloaderSong
 from spotify_web_downloader.enums import DownloadModeSong, DownloadModeVideo, RemuxMode
 from spotify_web_downloader.models import Lyrics
 from spotify_web_downloader.spotify_api import SpotifyApi
+from spotify_web_downloader.enums import DownloadModeSong
 
 from deezer_downloader.threadpool_queue import ThreadpoolScheduler, report_progress
 
@@ -153,13 +154,19 @@ def do_download_by_playlist_url(url, path):
     overwrite = False
     no_lrc = True
 
+    template_folder_album = "/",
+    template_folder_compilation = "/",
+    template_file_single_disc = "{album} - {track:02d} {title}",
+    template_file_multi_disc = "{album} - {track:02d} {title}",
+
     spotify_api = SpotifyApi(cookies_path)
     downloader = Downloader(
         spotify_api=spotify_api,
-        output_path=output_path
+        output_path=output_path,
     )
     downloader_song = DownloaderSong(
-        downloader=downloader
+        downloader=downloader,
+        download_mode=DownloadModeSong.ARIA2C
     )
 
     list_of_files = []
@@ -196,7 +203,9 @@ def do_download_by_playlist_url(url, path):
                     track_credits,
                     lyrics.unsynced,
                 )
-                final_path = downloader_song.get_final_path(tags)
+                #final_path = downloader_song.get_final_path(tags)
+                c_path = path + "/" + tags["artist"] + " " + tags["album"] + " " + tags["title"] + ".m4a".replace("/","")
+                final_path = Path(c_path)
                 lrc_path = downloader_song.get_lrc_path(final_path)
                 cover_path = downloader_song.get_cover_path(final_path)
                 cover_url = downloader.get_cover_url(metadata_gid, "LARGE")

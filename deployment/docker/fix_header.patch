@@ -1,18 +1,12 @@
 --- a/htdocs/index.html
 +++ b/htdocs/index.html
-@@ -61,6 +61,16 @@
+@@ -61,6 +61,10 @@
                  >Settings</a
                >
              </li>
 +            <li>
 +              <a
 +                href="" onclick="win = window.open('/d/', '_blank'); win.focus();">Deezer</a>
-+            </li>
-+            <li>
-+              <audio controls autoplay muted style="width: 200px;height: 30px;margin-top: 10px;">
-+                <source src="/stream" type="audio/ogg">
-+                Not html5 
-+              </audio>
 +            </li>
            </ul>
  

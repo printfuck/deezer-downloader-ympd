@@ -39,7 +39,7 @@ RUN pip install mopidy spotify-web-downloader
 ADD deezer_downloader/spotify.py /usr/local/lib/python3.10/site-packages/deezer_downloader/
 ADD deezer_downloader/web/music_backend.py /usr/local/lib/python3.10/site-packages/deezer_downloader/web/
 RUN mkdir /app
-ADD cookies.txt /app/
+#ADD cookies.txt /app/
 ADD supervisord.conf /etc/supervisord.conf
 ADD mpd.conf /etc/mpd.conf
 ADD deezer-downloader.ini /etc/deezer-downloader.ini
