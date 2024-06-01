@@ -23,6 +23,8 @@ services:
       - ./log:/log/
       # Your Collection
       # - /data/my_music:/mnt/deezer-downloader/my_music
+      # your spotify cookies
+      - ./cookies.txt:/app/cookies.txt
     environment:
       - DEEZER_COOKIE_ARL=908c985e1f7733b1d73801be42e5542d6eaf9c7550fb0019fae589f51e2d207ad889c0709402c97332bd8023469f36b948326b37b6f596099de42479f6aba2189cc5b6ab9052b0a08da7ecba873ab97a79598a8cc8431e66a0cba9223979d19f
 ```
