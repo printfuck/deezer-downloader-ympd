@@ -204,8 +204,8 @@ def do_download_by_playlist_url(url, path):
                     lyrics.unsynced,
                 )
                 #final_path = downloader_song.get_final_path(tags)
-                c_path = path + "/" + tags["artist"] + " " + tags["album"] + " " + tags["title"] + ".m4a".replace("/","")
-                final_path = Path(c_path)
+                c_path = tags["artist"] + " " + tags["album"] + " " + tags["title"] + ".m4a"
+                final_path = Path(path + "/" + c_path.replace("/",""))
                 lrc_path = downloader_song.get_lrc_path(final_path)
                 cover_path = downloader_song.get_cover_path(final_path)
                 cover_url = downloader.get_cover_url(metadata_gid, "LARGE")
